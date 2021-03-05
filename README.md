@@ -14,14 +14,16 @@ candidate
 ```
 Input example:
 ```
-number_of_relations number_of_candidates
-king
-descendant parent parent
-descendant parent parent
-descendant parent parent
-candidate
-candidate
-candidate
+5 2
+charles
+philip charles diana
+elizabeth charles diana
+louis philip matilda
+victoria philip matilda
+arthur louis helena
+arthur
+victoria
+
 ```
 # Output
 Output syntax:
@@ -30,4 +32,5 @@ name_of_heir
 ```
 Output example:
 ```
-matthew
+victoria
+```
