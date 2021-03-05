@@ -2,48 +2,60 @@
 #include <map>
 using namespace std;
 
-static map <string, pair <string, string>> * descendantName;
-static string founder;
+static map <string, pair <string, string>> * relations;
+static string king;
 
-double getBlood(string candidate) {
-    if (candidate == founder)
+double getHeritage(string descendant) {
+    
+    // Descendant is the king
+    if (descendant == king)
         return 1;
-    else if (descendantName->count(candidate) != 0)
-        return (getBlood(descendantName->at(candidate).first) + getBlood(descendantName->at(candidate).second)) / 2;
+
+    // Descendant has a parent which may have royal blood
+    // Recursive function calculates parent heritage until it reaches either king or no royal blood
+    else if (relations->count(descendant) != 0)
+        return (getHeritage(relations->at(descendant).first)
+                + getHeritage(relations->at(descendant).second)) / 2;
+    
+    // Descendant has no royal blood
     else
         return 0;
+    
 }
 
 int main() {
-    int descendantCount = 0;
-    int claimantCount = 0;
-    cin >> descendantCount >> claimantCount;
     
-    descendantName = new map <string, pair <string, string>>;
-    cin >> founder;
+    // Number of relations within the royal family and number of candidates to be considered
+    int relationCount = 0; cin >> relationCount;
+    int candidateCount = 0; cin >> candidateCount;
+    cin >> king;
     
-    string claimantList[claimantCount];
+    // Map with all parent-child relations and array with candidates
+    relations = new map <string, pair <string, string>>;
+    string candidates[candidateCount];
     
-    for (int i = 0; i < descendantCount; i++) {
-        string descendant, parentA, parentB = "";
-        cin >> descendant >> parentA >> parentB;
-        descendantName->insert(pair<string, pair <string, string>> (descendant, {parentA, parentB}));
+    // Insert names from input into relations
+    for (int i = 0; i < relationCount; i++) {
+        string descendant, firstParent, secondParent = "";
+        cin >> descendant >> firstParent >> secondParent;
+        relations->insert(pair<string, pair <string, string>> (descendant, {firstParent, secondParent}));
     }
     
-    for (int i = 0; i < claimantCount; i++)
-        cin >> claimantList[i];
+    // Insert names from input into candidates
+    for (int i = 0; i < candidateCount; i++)
+        cin >> candidates[i];
 
-    int bestClaimantIndex = 0;
-    double bestBloodValue = 0;
-    for (int i = 0; i < claimantCount; i++) {
-        double bloodValue = getBlood(claimantList[i]);
-        if (bloodValue > bestBloodValue) {
-            bestClaimantIndex = i;
-            bestBloodValue = bloodValue;
+    // Find candidate with the most amount of royal heritage
+    int bestCandidate = 0;
+    double bestHeritage = 0;
+    for (int i = 0; i < candidateCount; i++) {
+        double heritage = getHeritage(candidates[i]);
+        if (heritage > bestHeritage) {
+            bestCandidate = i;
+            bestHeritage = heritage;
         }
     }
-    cout << claimantList[bestClaimantIndex];
+    cout << candidates[bestCandidate];
     return 0;
+    
 }
-
-
